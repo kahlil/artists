@@ -25,7 +25,9 @@
         "error",
         "always-multiline"
       ],
-			"no-multiple-empty-lines": 0
+			"no-multiple-empty-lines": 0,
+			"no-duplicate-imports": 0,
+			"no-new": 0
     }
   }
 }

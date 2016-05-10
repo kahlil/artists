@@ -1,26 +1,27 @@
 import Rx from 'rxjs/Rx';
+import {curry} from 'lodash';
+import {reducers} from './reducers';
 
 export class Store {
 	constructor(dispatcher) {
-		const showDetails$ = dispatcher
-			.filter(action => action.type === 'SHOW_DETAILS')
-			.map(action => state => {
-				return state.map(item => {
-					if (item.id === action.data.id) {
-						item.open = true;
-					} else {
-						item.open = false;
-					}
-					return item;
-				});
-			});
-
 		const receiveData$ = dispatcher
 			.filter(action => action.type === 'RECEIVE_DATA')
-			.map(action => () => action.data);
+			.map(action => reducers.receiveData(action));
+
+		const showDetails$ = dispatcher
+			.filter(action => action.type === 'SHOW_DETAILS')
+			.map(action => curry(reducers.showDetails)(action));
+
+		const toggleHearted$ = dispatcher
+			.filter(action => action.type === 'TOGGLE_HEARTED')
+			.map(action => curry(reducers.toggleHearted)(action));
 
 		this._state$ = Rx.Observable
-			.merge(receiveData$, showDetails$)
+			.merge(
+				receiveData$,
+				showDetails$,
+				toggleHearted$
+			)
 			.scan((state, reducer) => reducer(state), [])
 			.publishReplay(1).refCount();
 	}

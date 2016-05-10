@@ -1,8 +1,10 @@
-import {mixin} from 'lodash';
-import {componentCommons} from './common';
+import {ComponentBase} from './common';
 
-export const artistDetailViewComponent = mixin({
-	element: '.detail-view',
+export class ArtistDetailViewComponent extends ComponentBase {
+	constructor(stream) {
+		super(stream);
+		this.element = '.detail-view';
+	}
 
 	generateHtml(data) {
 		return data
@@ -10,9 +12,11 @@ export const artistDetailViewComponent = mixin({
 			.map(item => `
 				<item>
 					<h1>${item.stageName}</h1>
-					<div>${item.info}</div>
+					<p>
+						<a href="${item.info}">More Info</a>
+					</p>
 					<div><img src="${item.img}" alt="" width="500" /></div>
 				</div>
 			`)[0];
-	},
-}, componentCommons);
+	}
+}

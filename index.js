@@ -1,6 +1,5 @@
 import Rx from 'rxjs/Rx';
 import $ from 'jquery';
-import {mixin, camelCase} from 'lodash';
 
 /**
  * SERVICE
@@ -21,26 +20,22 @@ import {Store} from './store/store';
 /**
  * COMPONENTS
  */
-import {artistListComponent} from './components/artist-list';
-import {artistDetailViewComponent} from './components/artist-detail-view';
+import {styles} from './components/styles';
+import {ArtistListComponent} from './components/artist-list';
+import {ArtistDetailViewComponent} from './components/artist-detail-view';
 
 /**
  * PREPARE THE DOM
  */
-const list = $('<div class="list" style="width: 30%; float: left">');
-const detailView = $('<div class="detail-view" style="width: 70%">');
-const styles = `
-	<style>
-		.list li { cursor: pointer; }
-	</style>
-`;
+const list = $('<div class="list">');
+const detailView = $('<div class="detail-view">');
 const $head = $('head');
 const $body = $('body');
 $head.append(styles);
 $body.prepend([list, detailView]);
 
 /**
- * DISPATCHER 💫
+ * DISPATCHER
  */
 const dispatcher = new Rx.Subject();
 
@@ -57,17 +52,8 @@ const actions = new Actions(dispatcher, dataService);
 const store = new Store(dispatcher);
 
 /**
- * Setup artistListComponent output stream.
+ * COMPONENTS
  */
-const artistClick$ = Rx.Observable.create(observer => {
-	$body.on('click', '.artist', e => observer.next($(e.target).data('id')));
-});
-actions.dispatchAction(artistClick$, 'SHOW_DETAILS');
-
-/**
- * INIT COMPONENTS
- */
-artistListComponent.init(store.state$);
-artistDetailViewComponent.init(store.state$);
-// Fire the initial action that fetches the data;
+new ArtistListComponent(store.state$, actions);
+new ArtistDetailViewComponent(store.state$, actions);
 actions.dispatchAction(Rx.Observable.of(''), 'GET_DATA');

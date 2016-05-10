@@ -12,4 +12,9 @@ export const actionCreators = {
 		type: 'SHOW_DETAILS',
 		data: {id},
 	}),
+
+	toggleHearted: id => ({
+		type: 'TOGGLE_HEARTED',
+		data: {id},
+	}),
 };
